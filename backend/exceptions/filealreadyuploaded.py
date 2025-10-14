@@ -1,3 +1,0 @@
-
-class FileAlreadyUploadedError(Exception):
-    pass

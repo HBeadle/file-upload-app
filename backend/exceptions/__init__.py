@@ -1,2 +1,1 @@
-from exceptions.filealreadyuploaded import FileAlreadyUploadedError
 from exceptions.filetype import FileTypeNotPermitted
