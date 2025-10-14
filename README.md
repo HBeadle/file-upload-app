@@ -4,7 +4,7 @@
 To run the app in development mode perform the following:
 
 0. Clone the git repo:
-    
+    git clone git@github.com:HBeadle/file-upload-app.git
 1. Navigate to project root directory
 2. Ensure you have both Docker Desktop (https://docs.docker.com/desktop/) 
 and Docker Compose (https://docs.docker.com/compose/install/) installed 

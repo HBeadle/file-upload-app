@@ -82,15 +82,6 @@ coverage/
 
 # Misc
 .DS_Store
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.dev
-.env.prod
-environment/.dev.env
-environment/.prod.env
 
 # IDEs
 *.swp
