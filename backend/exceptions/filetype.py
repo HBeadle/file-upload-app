@@ -1,0 +1,3 @@
+
+class FileTypeNotPermitted(Exception):
+    pass
