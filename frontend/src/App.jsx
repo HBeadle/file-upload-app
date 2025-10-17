@@ -39,7 +39,7 @@ function App() {
       formData.append("file", file);
   
       try {
-        const url = buildApiUrl("upload_file");
+        const url = buildApiUrl("files");
         const response = await fetch(url, {
           method: "POST",
           body: formData,
@@ -51,7 +51,7 @@ function App() {
           await fetchFiles();
         } else {
           const data = await response.json();
-          setMessage({ type: "error", text: data.detail?.message || "Upload failed" });
+          setMessage({ type: "error", text: data.detail?.message || data.detail?.error || "Upload failed" });
         }
       } catch (error) {
         setMessage({ type: "error", text: "Upload failed: " + error.message });
@@ -62,7 +62,7 @@ function App() {
 
     const deleteFile = async (filename) => {
       try {
-        const url = buildApiUrl(`delete_file/${encodeURIComponent(filename)}`);
+        const url = buildApiUrl(`files/${encodeURIComponent(filename)}`);
         const response = await fetch(url, {
           method: "DELETE",
         });
@@ -72,7 +72,7 @@ function App() {
           await fetchFiles();
         } else {
           const data = await response.json();
-          setMessage({ type: "error", text: data.detail?.message || "Delete failed" });
+          setMessage({ type: "error", text: data.detail?.message || data.detail?.error || "Delete failed" });
         }
       } catch (error) {
         setMessage({ type: "error", text: "Delete failed: " + error.message });

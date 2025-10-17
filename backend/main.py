@@ -29,7 +29,12 @@ def index() -> str:
     return "File Upload server is operational."
 
 
-@app.post("/api/v1/upload_file")
+@app.get("/api/v1/files")
+def get_files() -> Dict[str, List[FileInfo]]:
+    return {"files": [f.info for f in uploaded_files.values()]}
+
+
+@app.post("/api/v1/files")
 async def upload_file(file: UploadFile = File(...)) -> FileInfo:
     # Do not allow duplicate uploads (user must delete on frontend first)
     filename = file.filename
@@ -64,12 +69,7 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
         )
 
 
-@app.get("/api/v1/get_uploaded_files")
-def get_uploaded_files() -> Dict[str, List[FileInfo]]:
-    return {"files": [f.info for f in uploaded_files.values()]}
-
-
-@app.delete("/api/v1/delete_file/{filename}")
+@app.delete("/api/v1/files/{filename}")
 def delete_file(filename: str) -> Dict[str, str]:
     if filename not in uploaded_files:
         raise HTTPException(
