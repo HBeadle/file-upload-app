@@ -1,8 +1,9 @@
 from datetime import datetime
 from fastapi import UploadFile
 from typing import Tuple
+from uuid import uuid4
 
-from models.file_info import FileInfoWithContent
+from models.file_info import FileInfo, FileInfoWithContent
 
 import exceptions
 import io
@@ -35,10 +36,15 @@ async def parse_file(
             buffer.write(chunk)
         content = buffer.getvalue()
 
-    return FileInfoWithContent(
+    file_info = FileInfo(
+        file_id=uuid4(),
         filename=filename,
         upload_time=upload_time,
-        filesize=len(content),
+        filesize=len(content)
+    )
+    
+    return FileInfoWithContent(
+        file_info=file_info,
         content=content
     )
 
