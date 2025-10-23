@@ -67,7 +67,9 @@ function App() {
         });
     
         if (response.ok) {
-          setMessage({ type: "success", text: `File "${file_id}" deleted successfully` });
+          const data = await response.json();
+          const filename = data.content?.filename;
+          setMessage({ type: "success", text: `File "${filename}" deleted successfully` });
           await fetchFiles();
         } else {
           const data = await response.json();
@@ -79,9 +81,13 @@ function App() {
     };
   
     const handleFileInput = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        uploadFile(file);
+      const files = e.target.files;
+      if (files && files.length > 0 ) {
+        Array.from(files).forEach(file => {
+          if (file) {
+            uploadFile(file);
+          }
+        });
       }
     };
   
@@ -100,8 +106,11 @@ function App() {
       e.stopPropagation();
       setDragActive(false);
   
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        uploadFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer.files) {
+        const files = e.dataTransfer.files;
+        Array.from(files).forEach(file => {
+          uploadFile(file);
+        })
       }
     };
   
@@ -142,6 +151,7 @@ function App() {
                 Choose File
                 <input
                   type="file"
+                  multiple
                   onChange={handleFileInput}
                   disabled={uploading}
                   className="file-input"
