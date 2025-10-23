@@ -1,5 +1,3 @@
-# 6. Add README.md
-
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
@@ -64,7 +62,7 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
             status_code=500,
             detail={
                 "error": "Unexpected server error.",
-                "message": {str(e)}
+                "message": str(e)
             }
         )
 
