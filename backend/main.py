@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, List
+from uuid import UUID
 
 from logic.parse_file import parse_file
 from models.file_info import FileInfo, FileInfoWithContent
@@ -20,7 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-uploaded_files: Dict[str, FileInfoWithContent] = {}
+uploaded_files: Dict[UUID, FileInfoWithContent] = {}
 
 @app.get("/")
 def index() -> str:
@@ -29,26 +30,16 @@ def index() -> str:
 
 @app.get("/api/v1/files")
 def get_files() -> Dict[str, List[FileInfo]]:
-    return {"files": [f.info for f in uploaded_files.values()]}
+    return {"files": [f.file_info for f in uploaded_files.values()]}
 
 
 @app.post("/api/v1/files")
 async def upload_file(file: UploadFile = File(...)) -> FileInfo:
-    # Do not allow duplicate uploads (user must delete on frontend first)
-    filename = file.filename
-    if filename in uploaded_files:
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "File already uploaded.",
-                "message": f"File {filename} has already been uploaded."
-            }
-        )
-    
     try:
-        file_info = await parse_file(file)
-        uploaded_files[file_info.filename] = file_info
-        return file_info.info
+        parsed_file = await parse_file(file)
+        file_info = parsed_file.file_info
+        uploaded_files[file_info.file_id] = parsed_file
+        return file_info
     except exceptions.FileTypeNotPermitted as e:
         raise HTTPException(
             status_code=400,
@@ -67,17 +58,17 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
         )
 
 
-@app.delete("/api/v1/files/{filename}")
-def delete_file(filename: str) -> Dict[str, str]:
-    if filename not in uploaded_files:
+@app.delete("/api/v1/files/{file_id}")
+def delete_file(file_id: str) -> Dict[str, str]:
+    file_id = UUID(file_id)
+    if file_id not in uploaded_files:
         raise HTTPException(
             status_code=404,
             detail={
                 "error": "File not found.",
-                "message": f"File {filename} does not exist."
+                "message": f"File with ID {file_id} does not exist."
             }
         )
     
-    del uploaded_files[filename]
-    return {"message": f"File {filename} deleted successfully"}
-    
+    file_content = uploaded_files.pop(file_id)
+    return {"message": f"File {file_content.file_info.filename} deleted successfully"}

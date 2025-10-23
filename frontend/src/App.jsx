@@ -16,7 +16,6 @@ function App() {
 
     const buildApiUrl = (endpoint) => {
         const url = `${BACKEND_API_URL}/api/v1/${endpoint}`;
-        console.log("Url: " + url);
         return url
     }
   
@@ -60,15 +59,15 @@ function App() {
       }
     };
 
-    const deleteFile = async (filename) => {
+    const deleteFile = async (file_id) => {
       try {
-        const url = buildApiUrl(`files/${encodeURIComponent(filename)}`);
+        const url = buildApiUrl(`files/${encodeURIComponent(file_id)}`);
         const response = await fetch(url, {
           method: "DELETE",
         });
     
         if (response.ok) {
-          setMessage({ type: "success", text: `File "${filename}" deleted successfully` });
+          setMessage({ type: "success", text: `File "${file_id}" deleted successfully` });
           await fetchFiles();
         } else {
           const data = await response.json();
@@ -173,13 +172,13 @@ function App() {
                 </thead>
                 <tbody>
                   {files.map((file) => (
-                    <tr key={file.filename}>
+                    <tr key={file.file_id}>
                       <td>{file.filename}</td>
                       <td>{formatBytes(file.filesize)}</td>
                       <td>{formatDate(file.upload_time)}</td>
                       <td>
                         <button 
-                          onClick={() => deleteFile(file.filename)}
+                          onClick={() => deleteFile(file.file_id)}
                           className="delete-btn"
                         >
                           Delete
