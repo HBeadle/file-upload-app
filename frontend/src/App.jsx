@@ -22,7 +22,7 @@ function App() {
   
     const fetchFiles = async () => {
       try {
-        const url = buildApiUrl("get_uploaded_files");
+        const url = buildApiUrl("files");
         const response = await fetch(url);
         const data = await response.json();
         setFiles(data.files);
