@@ -59,7 +59,7 @@ async def upload_file(file: UploadFile = File(...)) -> FileInfo:
 
 
 @app.delete("/api/v1/files/{file_id}")
-def delete_file(file_id: str) -> Dict[str, str]:
+def delete_file(file_id: str) -> Dict:
     file_id = UUID(file_id)
     if file_id not in uploaded_files:
         raise HTTPException(
@@ -71,4 +71,7 @@ def delete_file(file_id: str) -> Dict[str, str]:
         )
     
     file_content = uploaded_files.pop(file_id)
-    return {"message": f"File {file_content.file_info.filename} deleted successfully"}
+    return {
+        "content": file_content.file_info.model_dump(), 
+        "message": f"File {file_content.file_info.filename} deleted successfully"
+    }
